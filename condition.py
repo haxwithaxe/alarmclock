@@ -14,7 +14,6 @@ class Condition(threading.Thread):
     def run(self):
         self.run_once()
         while not self.met:
-            print("self.met", self.met)
             self.poll()
         self.event.set()
 
