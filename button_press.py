@@ -12,4 +12,5 @@ class ButtonPress(Condition):
         """ Poll the state of the desired object or function.
         If it has satisfied the conditions then set self.met = True
         """
-        self.met = self.button.poll()
+	if not self.button.poll():
+	        self.met = True
