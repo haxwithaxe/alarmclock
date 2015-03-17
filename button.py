@@ -10,11 +10,10 @@ class Button(object):
 
     def __init__(self, pin):
         self.pin = pin
-	gpio__init__()
         gpio.setup(self.pin, gpio.IN, pull_up_down=gpio.PUD_UP)
 
     def poll(self):
-        return gpio.input(self.pin) #(gpio.input(self.pin) or False)
+        return not gpio.input(self.pin)
 
 if __name__ == "__main__":
 	b = Button(18)
