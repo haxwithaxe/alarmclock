@@ -3,6 +3,7 @@ import subprocess
 
 from action import Action
 
+
 class Command(Action):
 
     def __init__(self, command, args, delay_sec=0.2, repeat=False):

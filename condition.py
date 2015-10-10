@@ -1,3 +1,4 @@
+
 import threading
 
 class Condition(threading.Thread):
@@ -30,13 +31,16 @@ class Condition(threading.Thread):
         self._met = value
         self.lock.release()
 
-
     def poll(self):
-        """ Poll the state of the desired object or function.
+        """ Poll the state of the desired object.
+
         If it has satisfied the conditions then set self.met = True
+
         """
         pass
 
     def run_once(self):
         pass
 
+    def stop(self):
+        self.event.set()

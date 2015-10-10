@@ -1,6 +1,8 @@
 
 
+import logging
 from StringIO import StringIO
+import time
 import wave
 
 import alsaaudio
@@ -11,17 +13,14 @@ from action import Action
 class Play(Action):
 
     def __init__(self, wav_file=None, volume=100, card="default", repeat=True, delay_sec=0.2):
-        super(Play, self).__init__(delay_sec)
+        super(Play, self).__init__(repeat=repeat, delay_sec=delay_sec)
         self.wav_file = wav_file
-        wf = open(self.wav_file, "rb")
-        self.wav_str = wf.read()
-        wf.close()
+        with open(self.wav_file, "rb") as wf:
+	    self.wav_str = wf.read()
         self.wavio = lambda: wave.open(StringIO(self.wav_str))
         self.volume = volume
         self.card = card
-        self.repeat = repeat
         self.device = alsaaudio.PCM(card=card)
-        self.event = None
         self._alsa_init()
 
     def _alsa_init(self):
@@ -42,11 +41,14 @@ class Play(Action):
             raise ValueError('Unsupported format')
         self.device.setperiodsize(320)
 
-
     def execute(self):
         f = wave.open(StringIO(self.wav_str))
         data = f.readframes(320)
-        while data:
-            # Read data from stdin
+        while data and self.should_continue_loop:
+            if self.logger.getEffectiveLevel() == logging.DEBUG:
+                self.logger.debug("Quiet pass for sanity: %s", self.wav_file)
+                time.sleep(self.delay_sec*10)
+            self.logger.debug("Playing %s", self.wav_file)
             self.device.write(data)
             data = f.readframes(320)
+            self.logger.debug("Done playing %s", self.wav_file)
